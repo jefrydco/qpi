@@ -1,0 +1,38 @@
+/** The injected Query method
+ *
+ *  @callback Injectee
+ *  @param {...any} [params] Anything you want to pass to your extended method
+ *  @returns {void}
+ */
+
+/** Inject the query into a callback
+ *
+ *  @callback Injector
+ *  @param {Query} Q The query to extend with this
+ *  @returns {Injectee} The injected callback
+ */
+
+/** Options for QPI server
+ *
+ *  @name QpiOptions
+ *  @type {Object}
+ *  @property {Boolean} [query] Whether to enable query parsing
+ *  @property {Boolean} [body]  Whether to enable body parsing
+ *  @property {Object.<string, Injector>} [extend] Extend Query whith these
+ *
+ *  @property {Object} [cors] Enable cors
+ *  @property {Array<String|Regex>} cors.origins List of allowed origin (or `*`)
+ *  @property {String[]} [cors.allowHeaders] List of allowed incomming headers
+ *  @property {String[]} [cors.exposeHeaders] Headers exposed to the client
+ *
+ *  For added security, cors will set Access-Control-Allow-Origin to the origin
+ *  that matched, not the configured wildcard. This means callers won't know
+ *  about other domains that are supported.
+ */
+
+/** Handles a query (fully or partially)
+ *
+ *  @async
+ *  @callback Handler
+ *  @param {Query} Q The query
+ */
