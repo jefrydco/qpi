@@ -34,4 +34,6 @@ jobs:
       # generage doc
       - run: yarn doc
       # Upload doc
+      - run: git config --global user.email "circle@bot.com"
+      - run: git config --global user.name "circlebot"
       - run: git add docs && git commit -am "docs(jsdoc) generate github pages" && git push -q https://${GITHUB_PERSONAL_TOKEN}@github.com/qfoooo/qpi.git master
