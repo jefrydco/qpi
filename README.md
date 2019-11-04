@@ -3,6 +3,9 @@ QPI
 
 Yet another http framework for NodeJS
 
+[Documentation](https://qfoooo.github.io/qpi/)
+
+
 # Quick Start
 
 ```js
