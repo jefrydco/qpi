@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>query.js - Documentation</title>
+    
+    
+    
+    
+    
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content=""/>
+    
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Server.html">Server</a><ul class='methods'><li data-type='method'><a href="Server.html#get">get</a></li><li data-type='method'><a href="Server.html#post">post</a></li><li data-type='method'><a href="Server.html#put">put</a></li><li data-type='method'><a href="Server.html#del">del</a></li><li data-type='method'><a href="Server.html#patch">patch</a></li><li data-type='method'><a href="Server.html#listen">listen</a></li><li data-type='method'><a href="Server.html#address">address</a></li></ul></li><li><a href="Query.html">Query</a><ul class='methods'><li data-type='method'><a href="Query.html#send">send</a></li><li data-type='method'><a href="Query.html#badRequest">badRequest</a></li><li data-type='method'><a href="Query.html#unauthorized">unauthorized</a></li><li data-type='method'><a href="Query.html#forbidden">forbidden</a></li><li data-type='method'><a href="Query.html#notFound">notFound</a></li><li data-type='method'><a href="Query.html#conflict">conflict</a></li><li data-type='method'><a href="Query.html#tooManyRequest">tooManyRequest</a></li><li data-type='method'><a href="Query.html#internalServerError">internalServerError</a></li><li data-type='method'><a href="Query.html#notImplemented">notImplemented</a></li><li data-type='method'><a href="Query.html#end">end</a></li><li data-type='method'><a href="Query.html#next">next</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#Injectee">Injectee</a></li><li><a href="global.html#Injector">Injector</a></li><li><a href="global.html#QpiOptions">QpiOptions</a></li><li><a href="global.html#Handler">Handler</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">query.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** Store the context across queries
+ *
+ *  @access private
+ */
+const __ctx = {} // eslint-disable-line no-underscore-dangle
+
+/** A query, that is a request and a reponse, and everything in between
+ */
+class Query {
+  /** Construct the query
+   *
+   *  @package
+   *  @param {*} q The request
+   *  @param {*} r The response
+   *  @param {*} n The next method (which allows chaining)
+   */
+  constructor(q, r, n) {
+    this._req = q
+    this._res = r
+    this._next = n
+  }
+
+  //#region getter
+  /** Get the ID of the query
+   *
+   *  @type {String}
+   */
+  get id() { return this._req.id() }
+
+  /** Get the body that was sent
+   *
+   *  **NB** Requires having enabled body parsing on Server creation
+   *
+   *  @type {Object}
+   */
+  get body() { return this._req.body || {} }
+
+  /** Get the query that was sent
+   *
+   *  **NB** Requires having enabled query parsing on Server creation
+   *
+   *  @type {Object}
+   */
+  get query() { return typeof this._req.query === "object" ? this._req.query : {} }
+
+  /** Gets the full context as an object.
+   *
+   *  The context is anything that was passed down to the next handler
+   *
+   *  **NB**:
+   *  - Calling `end()`, `send()`, `next(true|false)` clear the context
+   *  - calling `$foo` is the same as `$.foo`
+   *
+   *  @type {Object}
+   *
+   *  @example
+   * Q => Q.next({token}) // attach the token to the context
+   * Q.$token == Q.$.token
+   */
+  get $() { return __ctx[this.id] || {}}
+
+  /** Gets uri parameters (`http://.../:foo/:bar` => `{foo: ..., bar: ...}`)
+   *
+   *  @type {Object}
+   */
+  get param() { return this._req.params }
+
+  /** Get http headers
+   *
+   *  @type {Object}
+   */
+  get header() { return this._req.headers }
+  //#endregion getters
+
+  //#region methods
+  /** Writes a response to the client / reset the context / calls next handler
+   *
+   *  @param {Number} [status=200] The http status to send
+   *  @param {any} body The body to send
+   *  @param {Object} [headers] Some headers to attach
+   */
+  send(status, body, headers) {
+    this._res.send(status, body, headers)
+    this.next(true)
+  }
+
+  //#region aliases
+  /* eslint-disable no-magic-numbers */
+  /** Sends a bad request (400) response
+   */
+  badRequest() {
+    this.end(400, {
+      code:    "BadRequest",
+      message: "Some fields are missing or invalid.",
+    })
+  }
+
+  /** Sends a unauthorized (401) response
+   */
+  unauthorized() {
+    this.end(401, {
+      code:    "Unauthorized",
+      message: "We don't know who you are.",
+    })
+  }
+
+  /** Sends a forbidden (403) response
+   */
+  forbidden() {
+    this.end(403, {
+      code:    "Forbidden",
+      message: "You cannot do that.",
+    })
+  }
+
+  /** Sends a not found (404) response
+   */
+  notFound() {
+    this.end(404, {
+      code:    "NotFound",
+      message: "This resource cannot be found.",
+    })
+  }
+
+  /** Sends a conflic (409) response
+   */
+  conflict() {
+    this.end(409, {
+      code:    "Conflict",
+      message: "This resource already exists.",
+    })
+  }
+
+  /** Sends a too many request (429) response
+   */
+  tooManyRequest() {
+    this.end(429, {
+      code:    "TooManyRequest",
+      message: "Try again later.",
+    })
+  }
+
+  /** Sends a internal server error (500) response
+   */
+  internalServerError() {
+    this.end(500, {
+      code:    "InternalServerError",
+      message: "Something went wrong.",
+    })
+  }
+
+  /** Sends a not implemented (501) response
+   */
+  notImplemented() {
+    this.end(501, {
+      code:    "NotImplemtented",
+      message: "We haven't done that yet.",
+    })
+  }
+  /* eslint-enable no-magic-numbers */
+  //#endregion aliases
+
+  /** Writes a response to the client / reset the context / stop handler chain
+   *
+   *  @param {Number} [status=200] The http status to send
+   *  @param {any} body The body to send
+   *  @param {Object} [headers] Some headers to attach
+   *
+   *  One can also use the following alias
+   *  - badRequest          => 400, "Some fields are missing or invalid."
+   *  - unauthorized        => 401, "We don't know who you are."
+   *  - forbidden           => 403, "You cannot do that."
+   *  - notFound            => 404, "This resource cannot be found."
+   *  - conflict            => 409, "This resource already exists."
+   *  - tooManyRequest      => 429, "Try again later."
+   *  - internalServerError => 500, "Something went wrong."
+   *  - notImplemented      => 501, "We haven't done that yet."
+   */
+  end(status, body, headers) {
+    this._res.send(status, body, headers)
+    this.next(false)
+  }
+
+  /** Call next handler
+   *
+   *  @param {Boolean|Object} [ctx] How to handle handlers
+   *  @returns {void}
+   *
+   *  If context is:
+   *  - not given: calls next handler
+   *  - true: reset context &amp; call next handler
+   *  - false: reset context &amp; stop handler chain
+   *  - object: attach to the context and call next handler
+   */
+  next(ctx) {
+    if (ctx === true || ctx === false) {
+      delete __ctx[this.id]
+      if (ctx === true) return this._next()
+      return this._next(ctx)
+    }
+    if (typeof ctx === "object")
+      __ctx[this.id] = { ...this.$, ...ctx }
+    return this._next()
+  }
+  //#endregion method
+}
+
+module.exports = Query
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Mon Nov 04 2019 20:21:39 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>
