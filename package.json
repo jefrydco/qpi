@@ -1,21 +1,14 @@
 {
   "name": "qpi",
   "version": "0.0.0",
-  "description": "",
-  "main": "srcs",
+  "description": "A simple yet relatively powerful http server framework",
+  "main": "srcs", 
   "scripts": {
     "test": "jest --forceExit --detectOpenHandles",
     "test:ci": "yarn test ; SUCCESS=$? ; codecov -t $CODECOV_TOKEN ; return $SUCCESS",
     "lint": "eslint srcs",
     "doc": "jsdoc -c jsdoc.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@gitlab.com:little-omega/libs/qpi.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "restify": "^8.4.0",
     "restify-cors-middleware": "^1.1.1"
@@ -28,5 +21,16 @@
     "jest": "^24.9.0",
     "jsdoc": "^3.6.3",
     "supertest": "^4.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qfoooo/qpi.git"
+  },
+  "keywords": ["server", "api", "cors", "http"],
+  "author": "qfoooo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/qfoooo/qpi/issues"
+  },
+  "homepage": "https://github.com/qfoooo/qpi#readme"
 }
