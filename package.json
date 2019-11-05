@@ -1,8 +1,8 @@
 {
   "name": "qpi",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A simple yet relatively powerful http server framework",
-  "main": "srcs", 
+  "main": "srcs",
   "scripts": {
     "test": "jest --forceExit --detectOpenHandles",
     "test:ci": "yarn test ; SUCCESS=$? ; codecov -t $CODECOV_TOKEN ; return $SUCCESS",
@@ -26,7 +26,12 @@
     "type": "git",
     "url": "git+https://github.com/qfoooo/qpi.git"
   },
-  "keywords": ["server", "api", "cors", "http"],
+  "keywords": [
+    "server",
+    "api",
+    "cors",
+    "http"
+  ],
   "author": "qfoooo",
   "license": "MIT",
   "bugs": {
