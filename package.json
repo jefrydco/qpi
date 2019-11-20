@@ -1,41 +1,87 @@
 {
   "name": "qpi",
-  "version": "0.1.0",
   "description": "A simple yet relatively powerful http server framework",
-  "main": "srcs",
-  "scripts": {
-    "test": "jest --forceExit --detectOpenHandles",
-    "test:ci": "yarn test ; SUCCESS=$? ; codecov -t $CODECOV_TOKEN ; return $SUCCESS",
-    "lint": "eslint srcs",
-    "doc": "jsdoc -c jsdoc.js"
-  },
-  "dependencies": {
-    "restify": "^8.4.0",
-    "restify-cors-middleware": "^1.1.1"
-  },
-  "devDependencies": {
-    "codecov": "3.6.1",
-    "docdash": "1.1.1",
-    "eslint": "6.8.0",
-    "eslint-plugin-jest": "23.6.0",
-    "jest": "24.9.0",
-    "jsdoc": "3.6.3",
-    "supertest": "4.0.2"
-  },
+  "license": "MIT",
+  "author": "qfoooo",
+  "homepage": "https://github.com/qfoooo/qpi#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/qfoooo/qpi.git"
   },
-  "keywords": [
-    "server",
-    "api",
-    "cors",
-    "http"
-  ],
-  "author": "qfoooo",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/qfoooo/qpi/issues"
   },
-  "homepage": "https://github.com/qfoooo/qpi#readme"
+  "version": "0.0.1",
+  "main": "dist",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rimraf docs && rimraf dist",
+    "doc": "typedoc --out docs lib",
+    "build": "webpack --progress --hide-modules",
+    "build-all": "yarn test && yarn clean && yarn doc && yarn build",
+    "lint": "eslint lib",
+    "test": "jest --forceExit --detectOpenHandles --verbose",
+    "test:ci": "yarn test ; SUCCESS=$? ; codecov -t $CODECOV_TOKEN ; return $SUCCESS"
+  },
+  "dependencies": {
+    "@types/supertest": "^2.0.8",
+    "restify": "^8.4.0",
+    "restify-cors-middleware": "^1.1.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.2",
+    "@babel/preset-env": "^7.7.1",
+    "@babel/preset-typescript": "^7.7.2",
+    "@types/jest": "^24.0.23",
+    "@types/node": "^12.12.11",
+    "@types/restify": "^8.4.2",
+    "@types/restify-cors-middleware": "^1.0.1",
+    "@types/webpack": "^4.41.0",
+    "@types/webpack-node-externals": "^1.7.0",
+    "@typescript-eslint/eslint-plugin": "^2.8.0",
+    "@typescript-eslint/parser": "^2.8.0",
+    "babel-jest": "^24.9.0",
+    "codecov": "3.6.1",
+    "docdash": "1.1.1",
+    "eslint": "6.6.0",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jest": "23.0.4",
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.1.0",
+    "jest": "24.9.0",
+    "jsdoc": "3.6.3",
+    "lint-staged": "^9.4.3",
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.0",
+    "supertest": "4.0.2",
+    "ts-jest": "^24.1.0",
+    "ts-loader": "^6.2.1",
+    "ts-node": "^8.5.2",
+    "typedoc": "^0.15.2",
+    "typescript": "^3.7.2",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "keywords": [
+    "api",
+    "cors",
+    "http",
+    "server"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts}": [
+      "prettier --write",
+      "eslint --fix",
+      "git add"
+    ]
+  }
 }
