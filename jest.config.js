@@ -2,6 +2,15 @@
 // https://jestjs.io/docs/en/configuration.html
 
 module.exports = {
+  verbose: true,
+  collectCoverage: true,
+  collectCoverageFrom: ['**/lib/*.ts', '!**/node_modules/**'],
+  preset: 'ts-jest',
+  globals: {
+    'ts-jest': {
+      babelConfig: true
+    }
+  },
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -18,19 +27,20 @@ module.exports = {
   clearMocks: true,
 
   // Indicates whether the coverage information should be collected while executing the test
-  collectCoverage: true,
+  // collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  collectCoverageFrom: ["srcs/**/*.js"],
+  // collectCoverageFrom: ["srcs/**/*.js"],
+  // collectCoverageFrom: ["lib/**/*.ts"],
 
   // The directory where Jest should output its coverage files
-  coverageDirectory: "coverage",
+  // coverageDirectory: "coverage",
 
   // An array of regexp pattern strings used to skip coverage collection
-  coveragePathIgnorePatterns: [
-    "/node_modules/",
-    "srcs/scripts/"
-  ],
+  // coveragePathIgnorePatterns: [
+  //   "/node_modules/",
+  //   "srcs/scripts/"
+  // ],
 
   // A list of reporter names that Jest uses when writing coverage reports
   // coverageReporters: [
@@ -41,14 +51,14 @@ module.exports = {
   // ],
 
   // An object that configures minimum threshold enforcement for coverage results
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: -10
-    }
-  },
+  // coverageThreshold: {
+  //   global: {
+  //     branches: 80,
+  //     functions: 80,
+  //     lines: 80,
+  //     statements: -10
+  //   }
+  // },
 
   // A path to a custom dependency extractor
   // dependencyExtractor: null,
@@ -155,9 +165,10 @@ module.exports = {
   // ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-  // testPathIgnorePatterns: [
-  //   "/node_modules/"
-  // ],
+  testPathIgnorePatterns: [
+    "dist",
+    "/node_modules/"
+  ],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
   // testRegex: [],
