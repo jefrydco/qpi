@@ -63,87 +63,25 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<div class="tsd-panel tsd-typography">
-				<a href="#qpi" id="qpi" style="color: inherit; text-decoration: none;">
-					<h1>QPI</h1>
-				</a>
-				<p>Yet another http framework for NodeJS</p>
-				<p><a href="https://qfoooo.github.io/qpi/">Documentation</a></p>
-				<a href="#quick-start" id="quick-start" style="color: inherit; text-decoration: none;">
-					<h1>Quick Start</h1>
-				</a>
-				<pre><code class="language-js"><span class="hljs-keyword">const</span> Server = <span class="hljs-built_in">require</span>(<span class="hljs-string">"qpi"</span>)
-
-<span class="hljs-keyword">const</span> server = <span class="hljs-keyword">new</span> Server({
-  <span class="hljs-attr">body</span>: <span class="hljs-literal">true</span>,       <span class="hljs-comment">// enable body parser</span>
-  <span class="hljs-attr">query</span>: <span class="hljs-literal">true</span>,      <span class="hljs-comment">// enable query parser</span>
-  <span class="hljs-attr">cors</span>: {
-    <span class="hljs-attr">origins</span>: [<span class="hljs-string">"*"</span>]  <span class="hljs-comment">// allow every origin</span>
-  }
-})
-
-server.get(<span class="hljs-string">"/"</span>, Q =&gt; Q.send(<span class="hljs-string">"Hello, World!"</span>))
-server.get(<span class="hljs-string">"/hello/:you"</span>, Q =&gt; Q.send(<span class="hljs-string">`Hello, <span class="hljs-subst">${Q.param.you}</span>!`</span>))
-<span class="hljs-comment">// GET /hello/bob =&gt; Hello, bob!</span>
-
-server.post(<span class="hljs-string">"/greet"</span>, Q =&gt; Q.send(<span class="hljs-string">`<span class="hljs-subst">${Q.body.greet}</span>, <span class="hljs-subst">${Q.query.me}</span>!`</span>))
-<span class="hljs-comment">// POST /greet?me=Bob -d greet=Hi</span>
-<span class="hljs-comment">// =&gt; Hi, Bob!</span>
-
-server.post(<span class="hljs-string">"/"</span>,
-  <span class="hljs-comment">// retrieves the token passed in the authorization header</span>
-  <span class="hljs-keyword">async</span> Q =&gt; Q.next({<span class="hljs-attr">token</span>: <span class="hljs-keyword">await</span> Token.find({<span class="hljs-attr">token</span>: Q.header.Authorization})}),
-  <span class="hljs-comment">// If the token is falsy, send a 401 unauthorized else, call next handler</span>
-  Q =&gt; Q.$token &amp;&amp; Q.next() || Q.unauthorized(),
-  <span class="hljs-comment">// valiates the query and attach what was validated to the context</span>
-  Q =&gt; Q.next({...(myValidationMiddleware()(Q))}),
-  <span class="hljs-comment">// do stuff</span>
-  Q =&gt; Q.send({
-    <span class="hljs-attr">say</span>: Q.$say, <span class="hljs-comment">// populated by the custom validation middleware,</span>
-    <span class="hljs-attr">to</span>: Q.$token.user.name, <span class="hljs-comment">// fetch by the 1st step</span>
-  })
-)
-<span class="hljs-comment">// POST / -d "say=   Aloha~   " -H "Authorization: 5up3r5ekr37"</span>
-<span class="hljs-comment">// =&gt; {say: "Aloha~", to: "Bob"}</span></code></pre>
-				<p>One can also inject its own return methods:</p>
-				<pre><code class="language-js"><span class="hljs-keyword">const</span> Server = <span class="hljs-built_in">require</span>(<span class="hljs-string">"qpi"</span>)
-
-<span class="hljs-keyword">const</span> server = <span class="hljs-keyword">new</span> Server({
-  <span class="hljs-attr">extend</span>: {
-    <span class="hljs-attr">toInifinity</span>: <span class="hljs-function"><span class="hljs-params">Q</span> =&gt;</span> <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> Q.send(<span class="hljs-string">"And Beyond"</span>),   <span class="hljs-comment">// add a new response</span>
-    <span class="hljs-attr">internalServerError</span>: <span class="hljs-function"><span class="hljs-params">Q</span> =&gt;</span> e: <span class="hljs-function"><span class="hljs-params">Error</span> =&gt;</span> {         <span class="hljs-comment">// override an existing response</span>
-      <span class="hljs-keyword">if</span> (process.env.NODE_ENV === <span class="hljs-string">"development"</span>)
-        <span class="hljs-keyword">return</span> Q.end(<span class="hljs-number">500</span>, {<span class="hljs-attr">code</span>: <span class="hljs-string">"InternalServerError"</span>, <span class="hljs-attr">message</span>: e.message, <span class="hljs-attr">stack</span>: e.stack})
-      <span class="hljs-keyword">return</span> Q.end(<span class="hljs-number">500</span>, {<span class="hljs-attr">code</span>: <span class="hljs-string">"InternalServerError"</span>, <span class="hljs-attr">message</span>: <span class="hljs-string">"Something went wrong"</span>})
-    }
-  }
-})
-
-server.get(<span class="hljs-string">"/infinity"</span>, Q =&gt; Q.toInfinity())
-<span class="hljs-comment">// GET /infinity</span>
-<span class="hljs-comment">// =&gt; "And beyond"</span>
-
-server.get(<span class="hljs-string">"/"</span>, () =&gt; { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"foo"</span>) })
-
-<span class="hljs-comment">// GET /</span>
-<span class="hljs-comment">// =&gt; { code: "InternalServerError", message: "foo", stack: "..." }</span></code></pre>
-				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
-					<h1>Contributing</h1>
-				</a>
-				<a href="#yarn-commands" id="yarn-commands" style="color: inherit; text-decoration: none;">
-					<h2>Yarn commands</h2>
-				</a>
-				<ul>
-					<li><strong>test</strong>: Run tests + coverage</li>
-					<li><strong>lint</strong>: Run linter (<code>yarn lint --fix</code> to fix some errors)</li>
-					<li><strong>doc</strong>: Generate JSDoc documentation</li>
-				</ul>
-			</div>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>External modules</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-external-module"><a href="modules/_index_.html" class="tsd-kind-icon">&quot;index&quot;</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_query_.html" class="tsd-kind-icon">&quot;query&quot;</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
+					<li class="globals current ">
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
