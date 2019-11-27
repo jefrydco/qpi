@@ -13,11 +13,18 @@ class Query {
    *  @param {*} q The request
    *  @param {*} r The response
    *  @param {*} n The next method (which allows chaining)
+   *  @param {*} e The error (if an error is passed to .next())
    */
-  constructor(q, r, n) {
+  constructor(q, r, n, e) {
     this._req = q
     this._res = r
-    this._next = n
+    if (typeof n === "object") {
+      this._route = n
+      this._err = e
+    }
+    else {
+      this._next = n
+    }
   }
 
   //#region getter

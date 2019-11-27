@@ -52,4 +52,38 @@ describe("chaining & context", () => {
       Q => Q.send({ ...Q.$ }))
     client(server).get("/").expect(200, { a: 2 }, done)
   })
+  it("Should be able to call something before path resolution", async done => {
+    let a = 0
+    const server = new Server()
+    server.beforeAll(Q => {
+      a++
+      Q.next()
+    })
+    await client(server).get("/").expect(404)
+    expect(a).toEqual(1)
+    done()
+  })
+  it("Should be able to call something after route resolution", done => {
+    const server = new Server()
+    server.beforeAll(Q => Q.next({a: 1}))
+    server.before(Q => Q.next({a: Q.$a + 1}))
+    server.get("/", Q => Q.send({a: Q.$a + 1}))
+    client(server)
+      .get("/")
+      .expect(200, {a: 3}, done)
+  })
+  it("Should be able to call something after route execution", async done => {
+    let a = 0
+    const server = new Server()
+    server.beforeAll(Q => Q.next({a: 1}))
+    server.before(Q => Q.next({a: Q.$a + 1}))
+    server.get("/", Q => Q.send({a: Q.$a + 1}))
+    server.after(Q => {a = 4})
+    await client(server)
+      .get("/")
+      .expect(200, {a: 3})
+    await new Promise(r => setTimeout(r, 200))
+    expect(a).toEqual(4)
+    done()
+  })
 })

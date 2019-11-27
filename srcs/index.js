@@ -33,8 +33,8 @@ class Server {
    *  @returns {function} The raw handler for inner server
    */
   _handle(handle) { // eslint-disable-line no-underscore-dangle
-    return async (q, r, n) => {
-      const query = new Proxy(new Query(q, r, n), { get: (t, e) => {
+    return async (q, r, n, err = null) => {
+      const query = new Proxy(new Query(q, r, n, err), { get: (t, e) => {
         if (e === "$") return t.$
         if (e[0] === "$") return t.$[e.slice(1)]
         return this.extended[e] && this.extended[e](t) || t[e]
@@ -50,6 +50,30 @@ class Server {
   //#endregion private
 
   //#region public methods
+  /** Call this before anything else
+   *
+   *  @param {...Handler} handlers What to do before the route is resolved
+   */
+  beforeAll(...handlers) {
+    this._server.pre(...handlers.map(h => this._handle(h)))
+  }
+
+  /** Call this before routes handlers
+   *
+   *  @param {...Handler} handlers What to do after the route is resolved
+   */
+  before(...handlers) {
+    this._server.use(...handlers.map(h => this._handle(h)))
+  }
+
+  /** Call this after routes handlers
+   *
+   *  @param {...Handler} handlers What to do after the route is ran
+   */
+  after(...handlers) {
+    handlers.map(h => this._server.on("after", this._handle(h)))
+  }
+
   //#region HTTP Verbs
   /** Handle GET routes
    *
