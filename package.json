@@ -17,7 +17,7 @@
     "codecov": "3.6.1",
     "docdash": "1.1.1",
     "eslint": "6.6.0",
-    "eslint-plugin-jest": "23.0.4",
+    "eslint-plugin-jest": "23.0.5",
     "jest": "24.9.0",
     "jsdoc": "3.6.3",
     "supertest": "4.0.2"
