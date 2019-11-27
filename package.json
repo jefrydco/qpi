@@ -1,6 +1,6 @@
 {
   "name": "qpi",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A simple yet relatively powerful http server framework",
   "main": "srcs",
   "scripts": {
